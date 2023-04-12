@@ -27,22 +27,10 @@ public class Generator : IIncrementalGenerator
     private void GenerateInterfaceDelegation(SourceProductionContext context, InterfaceDelegation delegation)
     {
         using var codeBuilder = new StringWriter();
-        codeBuilder.WriteLine($"partial class {delegation.TargetType.Name} {{");
-
-        foreach (var member in delegation.Data.InterfaceType.GetMembers())
-            switch (member)
-            {
-                case IMethodSymbol methodSymbol:
-                    codeBuilder.WriteLine($"{methodSymbol.ReturnType} {delegation.Data.InterfaceType}.{methodSymbol.Name}({string.Join(", ", methodSymbol.Parameters.Select(p => $"{p.Type} {p.Name}"))}) => {delegation.Data.FieldName}.{methodSymbol.Name}({string.Join(", ", methodSymbol.Parameters.Select(p => p.Name))});");
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-
-        codeBuilder.WriteLine("}");
-
+        var delegationWriter = new InterfaceDelegationWriter(codeBuilder, delegation);
+        delegationWriter.Write();
         var source = codeBuilder.ToString();
+
         context.AddSource($"{delegation.TargetType}_{delegation.Data.InterfaceType}.g.cs", source);
     }
 
@@ -58,10 +46,8 @@ public class Generator : IIncrementalGenerator
 
         return attributes
             .SelectMany(x => x.InterfaceType.AllInterfaces
-                .Concat(new[] {x.InterfaceType})
-                .Select(i => new InterfaceDelegation(targetType, x with {InterfaceType = i})))
+                .Concat(new[] {x.InterfaceType,})
+                .Select(i => new InterfaceDelegation(targetType, x with {InterfaceType = i,})))
             .ToList();
     }
-
-    private record InterfaceDelegation(INamedTypeSymbol TargetType, DelegateTo Data);
 }
