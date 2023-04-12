@@ -9,6 +9,7 @@ pipeline
     agent any
     stages
     {
+        stage('Cleanup') { steps { script { runStage(); } } }
         stage('Build') { steps { script { runStage(); } } }
         stage('Test') { steps { script { runStage(); } } }
         stage('Pack') { steps { script { runStage(); } } }
