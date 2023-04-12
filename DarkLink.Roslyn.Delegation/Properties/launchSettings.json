@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Debug Roslyn Component": {
+      "commandName": "Executable",
+      "executablePath": "dotnet-kittitas",
+      "commandLineArgs": "./DemoApp/DemoApp.csproj",
+      "workingDirectory": ".."
+    }
+  }
+}
