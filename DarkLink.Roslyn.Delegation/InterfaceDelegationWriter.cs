@@ -18,6 +18,25 @@ internal class InterfaceDelegationWriter
         this.writer = new IndentedTextWriter(writer);
     }
 
+    private bool IsMemberImplemented(ISymbol memberSymbol)
+    {
+        if (memberSymbol is not IMethodSymbol methodSymbol)
+            return false;
+
+        var implicitMembers = delegation.TargetType.GetMembers(memberSymbol.Name);
+        var explicitMembers = delegation.TargetType.GetMembers($"{memberSymbol.ContainingType}.{memberSymbol.Name}");
+
+        return explicitMembers
+            .Concat(implicitMembers)
+            .OfType<IMethodSymbol>()
+            .Any(m => HasSameSignature(methodSymbol, m));
+
+        bool HasSameSignature(IMethodSymbol method1, IMethodSymbol method2)
+            => SymbolEqualityComparer.Default.Equals(method1.ReturnType, method2.ReturnType)
+               && method1.Parameters.Select(p => p.Type)
+                   .SequenceEqual(method2.Parameters.Select(p => p.Type), SymbolEqualityComparer.Default);
+    }
+
     public void Write()
     {
         if (delegation.TargetType.ContainingNamespace.IsGlobalNamespace)
@@ -30,19 +49,6 @@ internal class InterfaceDelegationWriter
     {
         foreach (var member in delegation.Data.InterfaceType.GetMembers())
             WriteMember(member);
-
-        void WriteMember(ISymbol memberSymbol)
-        {
-            switch (memberSymbol)
-            {
-                case IMethodSymbol methodSymbol:
-                    WriteMethod(methodSymbol);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-        }
     }
 
     private void WriteInsideNamespace(INamespaceSymbol namespaceSymbol, Action act)
@@ -70,6 +76,22 @@ internal class InterfaceDelegationWriter
             act();
             writer.Indent--;
             writer.WriteLine("}");
+        }
+    }
+
+    private void WriteMember(ISymbol memberSymbol)
+    {
+        if (IsMemberImplemented(memberSymbol))
+            return;
+
+        switch (memberSymbol)
+        {
+            case IMethodSymbol methodSymbol:
+                WriteMethod(methodSymbol);
+                break;
+
+            default:
+                throw new NotImplementedException();
         }
     }
 

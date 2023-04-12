@@ -4,6 +4,72 @@ namespace DarkLink.Roslyn.Delegation.Test;
 public class GeneratorTest : VerifySourceGenerator
 {
     [TestMethod]
+    public async Task DelegateExplicitlyDecoratedInterface()
+    {
+        var source = @"
+using DarkLink.Roslyn.Delegation;
+
+namespace Top
+{
+    public interface IBase
+    {
+        bool Foo(string bar);
+
+        string Foo2(object bar);
+    }
+
+    [DelegateTo(typeof(IBase), ""b"")]
+    public partial class Sub : IBase
+    {
+        private readonly IBase b;
+
+        public Sub(IBase b)
+        {
+            this.b = b;
+        }
+
+        bool IBase.Foo(string bar) => true;
+    }
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
+    public async Task DelegateImplicitlyDecoratedOverloadedInterface()
+    {
+        var source = @"
+using DarkLink.Roslyn.Delegation;
+
+namespace Top
+{
+    public interface IBase
+    {
+        bool Foo(string bar);
+
+        string Foo(int bar);
+    }
+
+    [DelegateTo(typeof(IBase), ""b"")]
+    public partial class Sub : IBase
+    {
+        private readonly IBase b;
+
+        public Sub(IBase b)
+        {
+            this.b = b;
+        }
+
+        public bool Foo(string bar) => true;
+    }
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
     public async Task DelegateInterfaceHierarchy()
     {
         var source = @"
