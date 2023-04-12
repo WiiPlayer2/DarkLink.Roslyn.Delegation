@@ -1,7 +1,7 @@
 namespace DarkLink.Roslyn.Delegation.Test;
 
 [TestClass]
-public class InterfaceDelegationGeneratorTest : VerifySourceGenerator
+public class InterfaceDelegationGeneratorTest : VerifySourceGenerator<InterfaceDelegationGenerator>
 {
     [TestMethod]
     public async Task DelegateExplicitlyDecoratedInterface()

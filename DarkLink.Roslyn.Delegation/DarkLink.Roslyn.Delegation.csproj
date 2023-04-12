@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -42,8 +42,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="InjectedCode\*.cs" />
     <EmbeddedResource Include="InjectedCode\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="InjectedCode\IPropertyDelegate.cs" />
   </ItemGroup>
 
 </Project>
