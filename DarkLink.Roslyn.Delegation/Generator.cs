@@ -56,7 +56,11 @@ public class Generator : IIncrementalGenerator
         if (context.TargetSymbol is not INamedTypeSymbol targetType)
             return Array.Empty<InterfaceDelegation>();
 
-        return attributes.Select(x => new InterfaceDelegation(targetType, x)).ToList();
+        return attributes
+            .SelectMany(x => x.InterfaceType.AllInterfaces
+                .Concat(new[] {x.InterfaceType})
+                .Select(i => new InterfaceDelegation(targetType, x with {InterfaceType = i})))
+            .ToList();
     }
 
     private record InterfaceDelegation(INamedTypeSymbol TargetType, DelegateTo Data);
