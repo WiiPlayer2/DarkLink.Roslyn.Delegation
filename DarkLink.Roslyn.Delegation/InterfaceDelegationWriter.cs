@@ -20,16 +20,16 @@ internal class InterfaceDelegationWriter
 
     private bool IsMemberImplemented(ISymbol memberSymbol)
     {
-        if (memberSymbol is not IMethodSymbol methodSymbol)
-            return false;
-
         var implicitMembers = delegation.TargetType.GetMembers(memberSymbol.Name);
         var explicitMembers = delegation.TargetType.GetMembers($"{memberSymbol.ContainingType}.{memberSymbol.Name}");
+        var members = implicitMembers.Concat(explicitMembers);
 
-        return explicitMembers
-            .Concat(implicitMembers)
-            .OfType<IMethodSymbol>()
-            .Any(m => HasSameSignature(methodSymbol, m));
+        return memberSymbol switch
+        {
+            IMethodSymbol methodSymbol => members.OfType<IMethodSymbol>().Any(m => HasSameSignature(methodSymbol, m)),
+            IPropertySymbol propertySymbol => members.OfType<IPropertySymbol>().Any(p => SymbolEqualityComparer.Default.Equals(p.Type, propertySymbol.Type)),
+            _ => false,
+        };
 
         bool HasSameSignature(IMethodSymbol method1, IMethodSymbol method2)
             => SymbolEqualityComparer.Default.Equals(method1.ReturnType, method2.ReturnType)
@@ -87,14 +87,22 @@ internal class InterfaceDelegationWriter
         switch (memberSymbol)
         {
             case IMethodSymbol methodSymbol:
+                if (methodSymbol.MethodKind is not MethodKind.Ordinary)
+                    return;
                 WriteMethod(methodSymbol);
                 break;
 
-            default:
-                throw new NotImplementedException();
+            case IPropertySymbol propertySymbol:
+                WriteProperty(propertySymbol);
+                break;
         }
     }
 
     private void WriteMethod(IMethodSymbol methodSymbol)
         => writer.WriteLine($"{methodSymbol.ReturnType} {delegation.Data.InterfaceType}.{methodSymbol.Name}({string.Join(", ", methodSymbol.Parameters.Select(p => $"{p.Type} {p.Name}"))}) => {delegation.Data.FieldName}.{methodSymbol.Name}({string.Join(", ", methodSymbol.Parameters.Select(p => p.Name))});");
+
+    private void WriteProperty(IPropertySymbol propertySymbol)
+        => writer.WriteLine(propertySymbol.IsReadOnly
+            ? $"{propertySymbol.Type} {delegation.Data.InterfaceType}.{propertySymbol.Name} {{ get => {delegation.Data.FieldName}.{propertySymbol.Name}; }}"
+            : $"{propertySymbol.Type} {delegation.Data.InterfaceType}.{propertySymbol.Name} {{ get => {delegation.Data.FieldName}.{propertySymbol.Name}; set => {delegation.Data.FieldName}.{propertySymbol.Name} = value; }}");
 }

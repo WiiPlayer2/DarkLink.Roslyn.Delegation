@@ -37,6 +37,36 @@ namespace Top
     }
 
     [TestMethod]
+    public async Task DelegateImplementedProperty()
+    {
+        var source = @"
+using DarkLink.Roslyn.Delegation;
+
+public interface IBase
+{
+    bool Foo { get; set; }
+
+    bool Foo2 { get; }
+}
+
+[DelegateTo(typeof(IBase), ""b"")]
+public partial class Sub : IBase
+{
+    private readonly IBase b;
+
+    public Sub(IBase b)
+    {
+        this.b = b;
+    }
+
+    bool IBase.Foo { get; set; }
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
     public async Task DelegateImplicitlyDecoratedOverloadedInterface()
     {
         var source = @"
@@ -130,6 +160,34 @@ namespace Top.Second
                 this.b = b;
             }
         }
+    }
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
+    public async Task DelegateProperties()
+    {
+        var source = @"
+using DarkLink.Roslyn.Delegation;
+
+public interface IBase
+{
+    bool Foo { get; set; }
+
+    bool Foo2 { get; }
+}
+
+[DelegateTo(typeof(IBase), ""b"")]
+public partial class Sub : IBase
+{
+    private readonly IBase b;
+
+    public Sub(IBase b)
+    {
+        this.b = b;
     }
 }
 ";
