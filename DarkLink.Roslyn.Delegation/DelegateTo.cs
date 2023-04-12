@@ -5,4 +5,4 @@ using Microsoft.CodeAnalysis;
 namespace DarkLink.Roslyn.Delegation;
 
 [GenerateAttribute(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public partial record DelegateTo(INamedTypeSymbol InterfaceType);
+internal partial record DelegateTo(INamedTypeSymbol InterfaceType, string FieldName);

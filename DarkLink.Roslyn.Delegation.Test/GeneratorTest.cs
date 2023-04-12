@@ -1,16 +1,39 @@
-using System;
+namespace DarkLink.Roslyn.Delegation.Test;
 
-namespace DarkLink.Roslyn.Delegation.Test
+[TestClass]
+public class GeneratorTest : VerifySourceGenerator
 {
-    [TestClass]
-    public class GeneratorTest : VerifySourceGenerator
+    [TestMethod]
+    public async Task DelegateSingleInterfaceWithMethod()
     {
-        [TestMethod]
-        public async Task Empty()
-        {
-            var source = string.Empty;
+        var source = @"
+using DarkLink.Roslyn.Delegation;
 
-            await Verify(source);
-        }
+public interface IBase
+{
+    bool Foo(string bar);
+}
+
+[DelegateTo(typeof(IBase), ""b"")]
+public partial class Sub : IBase
+{
+    private readonly IBase b;
+
+    public Sub(IBase b)
+    {
+        this.b = b;
+    }
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
+    public async Task Empty()
+    {
+        var source = string.Empty;
+
+        await Verify(source);
     }
 }
