@@ -8,5 +8,6 @@ namespace DarkLink.Roslyn.Delegation
     {
         public Delegated() { }
         public string? PropertyName { get; set; }
+        public bool GetOnly { get; set; }
     }
 }

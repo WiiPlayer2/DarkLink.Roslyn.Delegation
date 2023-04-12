@@ -95,4 +95,4 @@ internal record PropertyDelegationsType(INamedTypeSymbol TargetType, IReadOnlyLi
 internal record PropertyDelegation(Delegated Data, IFieldSymbol TargetField, string Name, INamedTypeSymbol Type);
 
 [GenerateAttribute(AttributeTargets.Field, AllowMultiple = false)]
-internal partial record Delegated(string? PropertyName = default);
+internal partial record Delegated(string? PropertyName = default, bool GetOnly = false);

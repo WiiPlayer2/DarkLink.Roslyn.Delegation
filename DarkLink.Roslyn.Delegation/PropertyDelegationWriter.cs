@@ -40,7 +40,8 @@ internal class PropertyDelegationWriter
         writer.WriteLine("{");
         writer.Indent++;
         writer.WriteLine($"get => {delegation.TargetField.Name}.Get(this, {propertyInfoFieldName});");
-        writer.WriteLine($"set => {delegation.TargetField.Name}.Set(this, {propertyInfoFieldName}, value);");
+        if (!delegation.Data.GetOnly)
+            writer.WriteLine($"set => {delegation.TargetField.Name}.Set(this, {propertyInfoFieldName}, value);");
         writer.Indent--;
         writer.WriteLine("}");
     }

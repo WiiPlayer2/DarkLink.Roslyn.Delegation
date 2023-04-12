@@ -4,6 +4,30 @@
 public class PropertyDelegationGeneratorTest : VerifySourceGenerator<PropertyDelegationGenerator>
 {
     [TestMethod]
+    public async Task DelegatedGetOnly()
+    {
+        var source = @"
+using System.Reflection;
+using DarkLink.Roslyn.Delegation;
+
+internal interface IPropertyDelegate<T>
+{
+    T Get(object? thisRef, PropertyInfo property);
+
+    void Set(object? thisRef, PropertyInfo property, T value);
+}
+
+public partial class A
+{
+    [Delegated(GetOnly = true)]
+    private readonly IPropertyDelegate<string> stringProperty;
+}
+";
+
+        await Verify(source);
+    }
+
+    [TestMethod]
     public async Task DelegatedInterface()
     {
         var source = @"
