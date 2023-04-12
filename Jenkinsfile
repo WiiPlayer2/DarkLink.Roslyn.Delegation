@@ -1,7 +1,7 @@
 def runStage()
 {
-    def configuredBuild = load "ci/jenkins/configuredBuild.groovy"
-    configuredBuild.run(STAGE_NAME)
+    def configuredBuild = load "ci/jenkins/configuredBuild.groovy";
+    configuredBuild.runAll();
 }
 
 pipeline
@@ -10,12 +10,5 @@ pipeline
         docker { image 'mcr.microsoft.com/dotnet/sdk:6.0' }
     }
 
-    stages
-    {
-        stage('Cleanup') { steps { script { runStage(); } } }
-        stage('Build') { steps { script { runStage(); } } }
-        stage('Test') { steps { script { runStage(); } } }
-        stage('Pack') { steps { script { runStage(); } } }
-        stage('Publish') { steps { script { runStage(); } } }
-    }
+    stages { stage { steps { script runStages(); } } }
 }
