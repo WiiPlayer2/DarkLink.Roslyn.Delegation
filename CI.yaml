@@ -1,4 +1,4 @@
-Nuget:
-  Project: ./DarkLink.Roslyn.Delegation/DarkLink.Roslyn.Delegation.csproj
-  VersionSuffix: $TIMESTAMP
-  SourceCredentials: private-nuget-repo
+- Nuget:
+    Project: ./DarkLink.Roslyn.Delegation/DarkLink.Roslyn.Delegation.csproj
+    VersionSuffix: $TIMESTAMP
+    SourceCredentials: private-nuget-repo
