@@ -41,12 +41,4 @@
     <None Update="tools/*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="InjectedCode\*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="InjectedCode\IPropertyDelegate.cs" />
-  </ItemGroup>
-
 </Project>

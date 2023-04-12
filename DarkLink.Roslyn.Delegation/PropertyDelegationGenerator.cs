@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using DarkLink.RoslynHelpers;
-using DarkLink.RoslynHelpers.AttributeGenerator;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 
 namespace DarkLink.Roslyn.Delegation;
 
@@ -48,16 +45,6 @@ public class PropertyDelegationGenerator : IIncrementalGenerator
     private void PostInitialize(IncrementalGeneratorPostInitializationContext context)
     {
         Delegated.AddTo(context);
-
-        var assembly = typeof(Generator).Assembly;
-        var injectedCodeResources = assembly.GetManifestResourceNames()
-            .Where(name => name.Contains("InjectedCode"));
-
-        foreach (var resource in injectedCodeResources)
-        {
-            using var stream = assembly.GetManifestResourceStream(resource)!;
-            context.AddSource(resource, SourceText.From(stream, new UTF8Encoding(false), canBeEmbedded: true));
-        }
     }
 
     private PropertyDelegation? TransformNodes(GeneratorAttributeSyntaxContext context, IReadOnlyList<Delegated> attributes, CancellationToken arg3)
