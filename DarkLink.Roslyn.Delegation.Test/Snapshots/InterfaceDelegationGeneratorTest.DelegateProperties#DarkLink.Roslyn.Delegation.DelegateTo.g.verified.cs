@@ -4,7 +4,7 @@ using System;
 namespace DarkLink.Roslyn.Delegation
 {
     [AttributeUsage((AttributeTargets)4, AllowMultiple = true, Inherited = false)]
-    public class DelegateTo : Attribute
+    internal class DelegateTo : Attribute
     {
         public DelegateTo(System.Type interfaceType, string fieldName) { }
     }

@@ -28,7 +28,7 @@ namespace DarkLink.Roslyn.Delegation.Test
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-            GeneratorDriver driver = CSharpGeneratorDriver.Create(new Generator());
+            GeneratorDriver driver = CSharpGeneratorDriver.Create(new InterfaceDelegationGenerator());
 
             driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var updatedCompilation, out var diagnostics);
 

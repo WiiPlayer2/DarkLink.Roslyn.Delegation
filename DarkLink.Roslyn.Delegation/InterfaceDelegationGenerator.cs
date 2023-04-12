@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis;
 namespace DarkLink.Roslyn.Delegation;
 
 [Generator]
-public class Generator : IIncrementalGenerator
+public class InterfaceDelegationGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
