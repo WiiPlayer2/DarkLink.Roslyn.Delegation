@@ -4,20 +4,25 @@ def runStage()
     configuredBuild.run(STAGE_NAME)
 }
 
+def createStage(stageName)
+{
+    stage(stageName)
+    {
+        steps
+        {
+            script
+            {
+                runStage();
+            }
+        }
+    }
+}
+
 pipeline
 {
     agent any
     stages
     {
-        stage('Build')
-        {
-            steps
-            {
-                script
-                {
-                    runStage()
-                }
-            }
-        }
+        createStage('Build');
     }
 }
